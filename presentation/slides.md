@@ -64,14 +64,23 @@ Ein Server Signal Monitor für einfache Betriebsdaten.
 
 # Architektur
 
-```text
-src/ApiProject
-  Controllers
-  Models
-  Repositories
-  appsettings.json
+```mermaid
+flowchart LR
+    Client[Client / Swagger / curl]
+    Controllers[ASP.NET Core Controllers]
+    Models[Request and Response Models]
+    RepoInterface[IMonitoringRepository]
+    Repo[InMemoryMonitoringRepository]
+    Seed[appsettings.json Seed Data]
+    Tests[xUnit Integration and Repository Tests]
 
-tests/ApiProject.Tests
+    Client --> Controllers
+    Controllers --> Models
+    Controllers --> RepoInterface
+    RepoInterface --> Repo
+    Seed --> Repo
+    Tests --> Controllers
+    Tests --> Repo
 ```
 
 - Controller für HTTP-Verhalten
@@ -81,6 +90,39 @@ tests/ApiProject.Tests
 - Integrationstests und Repository-Tests
 
 <!--
+-->
+
+---
+
+# Request Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant API as Controller
+    participant V as Model Validation
+    participant R as Repository
+
+    C->>API: POST /api/servers/{id}/signals
+    API->>V: Bind and validate JSON
+    alt invalid input
+        V-->>C: 400 Bad Request
+    else valid input
+        API->>R: AddSignalAsync(...)
+        R-->>API: Signal + optional Alarm
+        API-->>C: 201 Created
+    end
+```
+
+- Validierung passiert vor der Business-Logik
+- Repository bleibt austauschbar
+- Tests prüfen den Flow über HTTP
+
+<!--
+Das ist bewusst keine große Enterprise-Architektur. Für den Demo-Scope war mir wichtig:
+1. Der HTTP-Rand ist testbar.
+2. Validierung schützt die einfache Business-Logik.
+3. Die Datenhaltung hängt hinter einem Interface und kann später ersetzt werden.
 -->
 
 ---
@@ -161,7 +203,7 @@ Wichtig: Das ist bewusst noch keine vollständige Security-Lösung. Auth, Rate L
 # Nächste Schritte
 
 - Datenhaltung: SQLite, Migrationen, Tests gegen echte Persistenz
-- API-Schnittstelle: Auth, Rollen/Rechte, Pagination, Versionierung, ProblemDetails
+- API-Schnittstelle: Auth, Rollen/Rechte, Pagination, Versionierung, konsistente Fehler mit ProblemDetails
 - Große Datenmengen: Indexes, Cursor Pagination, Zeitfilter, Retention/Archivierung, Aggregates
 - Schutz vor Missbrauch: Rate Limiting, Request Size Limits, DDoS-Schutz über Proxy/Cloud Edge
 - Parallelität: echte Persistenz mit Concurrency Controls, async I/O, Background Processing
