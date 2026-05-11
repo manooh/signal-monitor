@@ -14,7 +14,7 @@ mdc: true
 
 # Web-Service Task Example
 
-Deployment Status Tracker als kleine .NET 8 REST API
+Server Signal Monitor als kleine .NET 8 REST API
 
 Vorstellung, Architekturentscheidungen und Live-Demo
 
@@ -51,11 +51,11 @@ Vorstellung, Architekturentscheidungen und Live-Demo
 
 # Idee
 
-Ein Deployment Status Tracker für Services und Environments.
+Ein Server Signal Monitor für einfache Betriebsdaten.
 
-- realistisch im DevOps-Kontext
-- klein genug für die Aufgabe
-- gut geeignet für eine kurze API-Demo
+- Server registrieren
+- Heartbeat, CPU und Memory als Signals erfassen
+- Alarme bei einfachen Schwellwerten anzeigen
 
 <!--
 -->
@@ -89,12 +89,14 @@ tests/ApiProject.Tests
 
 | Methode | Pfad | Zweck |
 | --- | --- | --- |
-| `GET` | `/api/deployments` | Deployments anzeigen und filtern |
-| `GET` | `/api/deployments/{id}` | Einzelnes Deployment anzeigen |
-| `GET` | `/api/deployments/latest` | Neuestes Deployment anzeigen |
-| `POST` | `/api/deployments` | Deployment anlegen |
-| `PUT` | `/api/deployments/{id}/status` | Status aktualisieren |
-| `DELETE` | `/api/deployments/{id}` | Deployment löschen |
+| `GET` | `/api/servers` | Server anzeigen und filtern |
+| `GET` | `/api/servers/{id}` | Einzelnen Server anzeigen |
+| `POST` | `/api/servers` | Server registrieren |
+| `POST` | `/api/servers/{id}/signals` | Signal erfassen |
+| `GET` | `/api/signals` | Signals anzeigen |
+| `GET` | `/api/alarms` | Alarme anzeigen |
+| `PUT` | `/api/alarms/{id}/status` | Alarmstatus aktualisieren |
+| `DELETE` | `/api/servers/{id}` | Server löschen |
 | `GET` | `/health` | Health Check |
 
 <!--
@@ -106,7 +108,7 @@ tests/ApiProject.Tests
 
 - .NET 8, weil LTS und aktuell unterstützt
 - ASP.NET Core Web API als naheliegender REST-Stack
-- In-Memory für einfachen Start (über Interface `IDeploymentRepository` für spätere Austauschbarkeit)
+- In-Memory für einfachen Start (über Interface `IMonitoringRepository` für spätere Austauschbarkeit)
 - Dokumentation über Swagger/OpenAPI, passend zur kleinen API
 - JSON Enums als Strings für lesbare Requests
 - Tests fokussiert auf Verhalten statt auf jedes Implementierungsdetail
@@ -124,11 +126,10 @@ tests/ApiProject.Tests
    - Dokumentation
    - API nutzen: `GET`, `POST`, `PUT`, `DELETE`
 
-3. Health Checks (einfacher Betriebstest)
-
-4. Tests
-   - Repository-Tests für Kernlogik
-   - API-Integrationstests für Routing, Validierung und JSON
+3. Server registrieren
+4. CPU- oder Memory-Signal erfassen und Alarm zeigen
+5. Alarm auf `Resolved` setzen
+6. Tests ausführen
 
 <!--
 -->
@@ -140,14 +141,14 @@ tests/ApiProject.Tests
 - Datenhaltung: SQLite, Migrationen, Tests gegen echte Persistenz
 - API-Schnittstelle: Auth, Pagination, Versionierung, ProblemDetails
 - Betrieb: Logging, Metriken, Tracing, erweiterte Health Checks
+- Alerting: konfigurierbare Schwellwerte, Deduplizierung, Benachrichtigungen
 - Delivery: CI/CD, Docker Image Build, Security Scans
-- Sicherheit: Secrets, Konfiguration, Container-Härtung
 
 <!--
 Nicht alles wäre sofort nötig. Sinnvolle Reihenfolge:
 1. Datenhaltung: In-Memory durch SQLite ersetzen, Migrationen einführen und Tests ergänzen, die wirklich gegen Persistenz laufen.
 2. API-Schnittstelle: Auth schützt schreibende Endpunkte; Pagination verhindert riesige Antworten; Versionierung hält spätere Änderungen kompatibel; ProblemDetails macht Fehlerantworten konsistent.
 3. Betrieb: Strukturierte Logs, Metriken und Tracing helfen bei Debugging und Monitoring; Health Checks sollten später auch Datenbank oder andere Dependencies prüfen.
-4. Delivery: CI/CD baut, testet und veröffentlicht das Docker Image reproduzierbar; Security Scans prüfen Abhängigkeiten und Container-Basisimages.
-5. Sicherheit: Secrets gehören in Umgebungsvariablen oder einen Secret Store; Container-Härtung bedeutet z. B. non-root User, kleinere Images und Resource Limits.
+4. Alerting: Schwellwerte gehören später in Konfiguration oder Datenbank; gleiche Alarme sollten nicht endlos doppelt erzeugt werden; Benachrichtigungen wären ein eigener Adapter.
+5. Delivery: CI/CD baut, testet und veröffentlicht das Docker Image reproduzierbar; Security Scans prüfen Abhängigkeiten und Container-Basisimages.
 -->
