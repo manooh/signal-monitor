@@ -26,9 +26,10 @@ docker compose -f presentation/docker-compose.yml down -v
 6. List/filter servers.
 7. Record a CPU or memory signal that raises an alarm.
 8. Resolve the alarm.
-9. Delete the server.
-10. Show `/health`.
-11. Briefly show the code structure in VS Code.
+9. Show one invalid input example returning `400 Bad Request`.
+10. Delete the server.
+11. Show `/health`.
+12. Briefly show the code structure in VS Code.
 
 ## .NET Commands
 
@@ -132,6 +133,34 @@ curl -i -X PUT http://localhost:5000/api/alarms/YOUR-ALARM-ID-HERE/status \
   -H "Content-Type: application/json" \
   -d '{
     "status": "Resolved"
+  }'
+```
+
+Invalid input examples:
+
+```bash
+# Wrong JSON type: name should be a non-empty string
+curl -i -X POST http://localhost:5000/api/servers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": 123,
+    "environment": "production",
+    "region": "eu-central"
+  }'
+
+# Missing required signal kind
+curl -i -X POST http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE/signals \
+  -H "Content-Type: application/json" \
+  -d '{
+    "value": 93
+  }'
+
+# Numeric enum values are rejected; use "Cpu", "Memory", or "Heartbeat"
+curl -i -X POST http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE/signals \
+  -H "Content-Type: application/json" \
+  -d '{
+    "kind": 1,
+    "value": 93
   }'
 ```
 

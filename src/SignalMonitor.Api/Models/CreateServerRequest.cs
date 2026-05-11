@@ -11,20 +11,23 @@ public sealed class CreateServerRequest
     /// Human-readable server name.
     /// </summary>
     [Required]
-    [MinLength(2)]
+    [StringLength(100, MinimumLength = 2)]
+    [RegularExpression(@".*\S.*")]
     public required string Name { get; init; }
 
     /// <summary>
     /// Environment, for example dev, staging, or production.
     /// </summary>
     [Required]
-    [MinLength(2)]
+    [StringLength(50, MinimumLength = 2)]
+    [RegularExpression(@".*\S.*")]
     public required string Environment { get; init; }
 
     /// <summary>
     /// Region or location where the server runs.
     /// </summary>
     [Required]
-    [MinLength(2)]
+    [StringLength(50, MinimumLength = 2)]
+    [RegularExpression(@".*\S.*")]
     public required string Region { get; init; }
 }

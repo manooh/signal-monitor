@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentAssertions;
@@ -65,6 +66,22 @@ public sealed class MonitoringApiTests
             environment = "prod",
             region = "eu"
         });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Theory]
+    [InlineData("""{"name":null,"environment":"prod","region":"eu"}""")]
+    [InlineData("""{"name":123,"environment":"prod","region":"eu"}""")]
+    [InlineData("""{"name":"  ","environment":"prod","region":"eu"}""")]
+    public async Task CreateServer_WithMalformedBody_ReturnsBadRequest(string json)
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient();
+
+        var response = await client.PostAsync(
+            "/api/servers",
+            new StringContent(json, Encoding.UTF8, "application/json"));
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -156,6 +173,66 @@ public sealed class MonitoringApiTests
         });
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Theory]
+    [InlineData("""{"kind":null,"value":93}""")]
+    [InlineData("""{"value":93}""")]
+    [InlineData("""{"kind":"Cpu"}""")]
+    [InlineData("""{"kind":1,"value":93}""")]
+    [InlineData("""{"kind":"Cpu","value":"ninety-three"}""")]
+    [InlineData("""{"kind":"Cpu","value":101}""")]
+    [InlineData("""{"kind":"Cpu","value":93,"unit":"  "}""")]
+    public async Task IngestSignal_WithMalformedBody_ReturnsBadRequest(string json)
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient();
+        var server = await CreateServerAsync(client);
+
+        var response = await client.PostAsync(
+            $"/api/servers/{server.Id}/signals",
+            new StringContent(json, Encoding.UTF8, "application/json"));
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Theory]
+    [InlineData("""{"status":null}""")]
+    [InlineData("""{}""")]
+    [InlineData("""{"status":1}""")]
+    [InlineData("""{"status":"not-real"}""")]
+    public async Task UpdateAlarmStatus_WithMalformedBody_ReturnsBadRequest(string json)
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient();
+        var server = await CreateServerAsync(client);
+
+        await client.PostAsJsonAsync($"/api/servers/{server.Id}/signals", new
+        {
+            kind = "Memory",
+            value = 86
+        });
+        var alarms = await (await client.GetAsync($"/api/alarms?serverId={server.Id}&status=Active"))
+            .Content
+            .ReadFromJsonAsync<Alarm[]>(JsonOptions);
+
+        var response = await client.PutAsync(
+            $"/api/alarms/{alarms![0].Id}/status",
+            new StringContent(json, Encoding.UTF8, "application/json"));
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    private static async Task<Server> CreateServerAsync(HttpClient client)
+    {
+        var createResponse = await client.PostAsJsonAsync("/api/servers", new
+        {
+            name = "api-prod-01",
+            environment = "production",
+            region = "eu-central"
+        });
+
+        return (await createResponse.Content.ReadFromJsonAsync<Server>(JsonOptions))!;
     }
 
     private static WebApplicationFactory<Program> CreateFactory()

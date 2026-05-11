@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SignalMonitor.Api.Models;
 
 /// <summary>
@@ -8,5 +10,6 @@ public sealed class UpdateAlarmStatusRequest
     /// <summary>
     /// New alarm status.
     /// </summary>
-    public AlarmStatus Status { get; init; }
+    [Required]
+    public AlarmStatus? Status { get; init; }
 }

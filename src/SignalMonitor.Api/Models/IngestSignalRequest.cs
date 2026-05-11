@@ -10,16 +10,20 @@ public sealed class IngestSignalRequest
     /// <summary>
     /// Type of signal being recorded.
     /// </summary>
-    public SignalKind Kind { get; init; }
+    [Required]
+    public SignalKind? Kind { get; init; }
 
     /// <summary>
     /// Numeric signal value. Heartbeat uses 1 for healthy and 0 for missing.
     /// </summary>
+    [Required]
     [Range(0, 100)]
-    public double Value { get; init; }
+    public double? Value { get; init; }
 
     /// <summary>
     /// Optional unit for the value, for example percent or ok.
     /// </summary>
+    [StringLength(32)]
+    [RegularExpression(@".*\S.*")]
     public string? Unit { get; init; }
 }

@@ -138,10 +138,22 @@ curl -i -X PUT http://localhost:5000/api/alarms/YOUR-ALARM-ID-HERE/status \
 
 Swagger/OpenAPI is generated with Swashbuckle. XML documentation comments are enabled in the API project and included in Swagger, so public API descriptions appear in Swagger UI during development.
 
+## Invalid Input Handling
+
+The API uses ASP.NET Core model binding and validation to reject malformed request bodies with `400 Bad Request`. The request models explicitly validate required fields, string lengths, non-whitespace text values, enum values, and signal value ranges.
+
+Examples that return `400 Bad Request`:
+
+- `null` or missing required fields, for example a signal without `kind` or `value`
+- numbers where strings or string enums are expected, for example `"name": 123` or `"kind": 1`
+- invalid enum names, for example `"status": "NotARealStatus"`
+- out-of-range signal values, for example `"value": 101`
+- whitespace-only text values, for example `"name": "  "`
+
 ## Design Notes
 
 - The API is deliberately small: servers, signal samples, and alarms.
 - The in-memory repository keeps the prototype easy to run locally.
 - `IMonitoringRepository` keeps storage replaceable, for example with SQLite later.
-- JSON enum values are serialized as strings, so requests can use values such as `"Cpu"` or `"Resolved"`.
-- API integration tests cover routing, model validation, JSON options, dependency injection, and controller behavior.
+- JSON enum values are serialized as strings, so requests can use values such as `"Cpu"` or `"Resolved"`; numeric enum values are rejected.
+- API integration tests cover routing, model validation, JSON options, dependency injection, controller behavior, and malformed input cases.

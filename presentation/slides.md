@@ -111,9 +111,30 @@ tests/ApiProject.Tests
 - In-Memory für einfachen Start (über Interface `IMonitoringRepository` für spätere Austauschbarkeit)
 - Dokumentation über Swagger/OpenAPI, passend zur kleinen API
 - JSON Enums als Strings für lesbare Requests
+- Ungültige Eingaben werden mit Validierung abgefangen: `null`, fehlende Felder, falsche Typen und ungültige Enum-Werte liefern `400 Bad Request`
 - Tests fokussiert auf Verhalten statt auf jedes Implementierungsdetail
 
 <!--
+-->
+
+---
+
+# Invalid Input Handling
+
+Was passiert bei kaputten oder absichtlich falschen Requests?
+
+- Required Fields sind explizit validiert
+- Strings haben Mindest-/Maximallängen und dürfen nicht nur Whitespace sein
+- Enums müssen als gültige Strings kommen, Zahlen wie `1` werden abgelehnt
+- Signalwerte sind auf `0` bis `100` begrenzt
+- Integrationstests prüfen diese Fälle gegen die echte HTTP-Schicht
+
+<!--
+Beispiele:
+- POST /api/servers mit "name": 123 oder "name": "  " => 400
+- POST /api/servers/{id}/signals ohne "kind" oder mit "kind": 1 => 400
+- PUT /api/alarms/{id}/status mit "status": "NotARealStatus" => 400
+Wichtig: Das ist bewusst noch keine vollständige Security-Lösung. Auth, Rate Limiting, Request Size Limits, Security Headers und strukturierte ProblemDetails wären sinnvolle nächste Schritte.
 -->
 
 ---
@@ -129,7 +150,8 @@ tests/ApiProject.Tests
 3. Server registrieren
 4. CPU- oder Memory-Signal erfassen und Alarm zeigen
 5. Alarm auf `Resolved` setzen
-6. Tests ausführen
+6. Einen kaputten Request zeigen: falscher Typ oder ungültiges Enum => `400`
+7. Tests ausführen
 
 <!--
 -->

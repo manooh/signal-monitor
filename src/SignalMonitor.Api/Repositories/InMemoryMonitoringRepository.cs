@@ -156,8 +156,8 @@ public sealed class InMemoryMonitoringRepository : IMonitoringRepository
                 Id = Guid.NewGuid(),
                 ServerId = server.Id,
                 ServerName = server.Name,
-                Kind = request.Kind,
-                Value = request.Value,
+                Kind = request.Kind!.Value,
+                Value = request.Value!.Value,
                 Unit = NormalizeUnit(request),
                 RecordedAt = DateTimeOffset.UtcNow
             };
@@ -213,7 +213,7 @@ public sealed class InMemoryMonitoringRepository : IMonitoringRepository
                 return Task.FromResult<Alarm?>(null);
             }
 
-            alarm.Status = request.Status;
+            alarm.Status = request.Status!.Value;
             alarm.UpdatedAt = DateTimeOffset.UtcNow;
             RefreshServerStatus(alarm.ServerId);
 
