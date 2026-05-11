@@ -1,0 +1,11 @@
+services:
+  trackr-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: trackr-api:local
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    ports:
+      - "5000:8080"

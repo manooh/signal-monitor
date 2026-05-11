@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "dev": "slidev slides.md --remote --bind 0.0.0.0 --port 3030",
+    "build": "slidev build slides.md",
+    "export": "slidev export slides.md"
+  },
+  "dependencies": {
+    "@slidev/cli": "latest",
+    "@slidev/theme-default": "latest",
+    "vue": "latest"
+  }
+}

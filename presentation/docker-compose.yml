@@ -1,0 +1,13 @@
+services:
+  slides:
+    image: node:22-alpine
+    working_dir: /deck
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3030:3030"
+    volumes:
+      - .:/deck
+      - slidev-node-modules:/deck/node_modules
+
+volumes:
+  slidev-node-modules:
