@@ -150,6 +150,15 @@ Examples that return `400 Bad Request`:
 - out-of-range signal values, for example `"value": 101`
 - whitespace-only text values, for example `"name": "  "`
 
+## Production Security and Scalability Considerations
+
+The demo intentionally keeps the runtime surface small, but the design leaves clear next steps for a production version:
+
+- DDoS and abuse protection: rate limiting, request size limits, reverse proxy or cloud edge protection, and alerting on unusual traffic patterns.
+- Authorization: authentication for callers and policies that protect write operations such as creating servers, ingesting signals, deleting servers, and resolving alarms.
+- Multiple access levels: read-only viewers, signal writers, operators who can acknowledge or resolve alarms, and admins who can manage servers.
+- Parallelism: the in-memory repository uses a lock to keep demo data consistent; a production store would rely on database concurrency controls, async I/O, pagination, and background processing for heavier signal ingestion.
+
 ## Design Notes
 
 - The API is deliberately small: servers, signal samples, and alarms.
