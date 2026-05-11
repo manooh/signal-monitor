@@ -1,11 +1,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY src/Trackr.Api/Trackr.Api.csproj src/Trackr.Api/
-RUN dotnet restore src/Trackr.Api/Trackr.Api.csproj
+COPY src/SignalMonitor.Api/SignalMonitor.Api.csproj src/SignalMonitor.Api/
+RUN dotnet restore src/SignalMonitor.Api/SignalMonitor.Api.csproj
 
-COPY src/Trackr.Api/ src/Trackr.Api/
-RUN dotnet publish src/Trackr.Api/Trackr.Api.csproj \
+COPY src/SignalMonitor.Api/ src/SignalMonitor.Api/
+RUN dotnet publish src/SignalMonitor.Api/SignalMonitor.Api.csproj \
     --configuration Release \
     --no-restore \
     --output /app/publish
@@ -17,4 +17,4 @@ ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Trackr.Api.dll"]
+ENTRYPOINT ["dotnet", "SignalMonitor.Api.dll"]

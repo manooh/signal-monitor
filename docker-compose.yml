@@ -1,9 +1,9 @@
 services:
-  trackr-api:
+  signal-monitor-api:
     build:
       context: .
       dockerfile: Dockerfile
-    image: trackr-api:local
+    image: signal-monitor-api:local
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080

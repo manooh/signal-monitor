@@ -1,8 +1,8 @@
-using Trackr.Api.Models;
-using Trackr.Api.Repositories;
+using SignalMonitor.Api.Models;
+using SignalMonitor.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Trackr.Api.Controllers;
+namespace SignalMonitor.Api.Controllers;
 
 /// <summary>
 /// Manages deployment records.

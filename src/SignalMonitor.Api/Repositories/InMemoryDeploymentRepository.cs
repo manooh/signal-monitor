@@ -1,6 +1,6 @@
-using Trackr.Api.Models;
+using SignalMonitor.Api.Models;
 
-namespace Trackr.Api.Repositories;
+namespace SignalMonitor.Api.Repositories;
 
 /// <summary>
 /// Thread-safe in-memory deployment repository seeded from configuration.

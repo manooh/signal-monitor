@@ -1,4 +1,4 @@
-namespace Trackr.Api.Models;
+namespace SignalMonitor.Api.Models;
 
 /// <summary>
 /// Status values used to track deployment progress.

@@ -1,14 +1,14 @@
-# Trackr
+# SignalMonitor
 
-Trackr is a small C#/.NET 8 REST API for tracking deployment status across services and environments. It uses an in-memory repository seeded from `appsettings.json`, exposes Swagger/OpenAPI documentation, and includes focused repository and API integration tests.
+SignalMonitor is a small C#/.NET 8 REST API for tracking deployment status across services and environments. It uses an in-memory repository seeded from `appsettings.json`, exposes Swagger/OpenAPI documentation, and includes focused repository and API integration tests.
 
 ## Project Structure
 
-- `src/Trackr.Api` - ASP.NET Core Web API
-- `src/Trackr.Api/Controllers` - HTTP endpoints
-- `src/Trackr.Api/Models` - request, response, and enum types
-- `src/Trackr.Api/Repositories` - deployment storage abstraction and in-memory implementation
-- `tests/Trackr.Api.Tests` - xUnit tests for repository behavior and API endpoints
+- `src/SignalMonitor.Api` - ASP.NET Core Web API
+- `src/SignalMonitor.Api/Controllers` - HTTP endpoints
+- `src/SignalMonitor.Api/Models` - request, response, and enum types
+- `src/SignalMonitor.Api/Repositories` - deployment storage abstraction and in-memory implementation
+- `tests/SignalMonitor.Api.Tests` - xUnit tests for repository behavior and API endpoints
 
 ## Prerequisites
 
@@ -18,19 +18,19 @@ Trackr is a small C#/.NET 8 REST API for tracking deployment status across servi
 ## Build
 
 ```bash
-dotnet build trackr.sln
+dotnet build signal-monitor.sln
 ```
 
 ## Run
 
 ```bash
-dotnet run --project src/Trackr.Api/Trackr.Api.csproj
+dotnet run --project src/SignalMonitor.Api/SignalMonitor.Api.csproj
 ```
 
 Run with the HTTPS launch profile:
 
 ```bash
-dotnet run --project src/Trackr.Api/Trackr.Api.csproj --launch-profile https
+dotnet run --project src/SignalMonitor.Api/SignalMonitor.Api.csproj --launch-profile https
 ```
 
 The API starts on the URLs printed by `dotnet run`. With the default launch settings these are:
@@ -63,20 +63,20 @@ docker compose down
 To build and run the image manually:
 
 ```bash
-docker build -t trackr-api .
+docker build -t signal-monitor-api .
 ```
 
 ```bash
 docker run --rm -p 5000:8080 \
   -e ASPNETCORE_ENVIRONMENT=Development \
-  --name trackr-api \
-  trackr-api
+  --name signal-monitor-api \
+  signal-monitor-api
 ```
 
 ## Test
 
 ```bash
-dotnet test trackr.sln
+dotnet test signal-monitor.sln
 ```
 
 ## API Endpoints
@@ -105,7 +105,7 @@ Create a deployment:
 curl -i -X POST http://localhost:5000/api/deployments \
   -H "Content-Type: application/json" \
   -d '{
-    "serviceName": "trackr-api",
+    "serviceName": "signal-monitor-api",
     "environment": "dev",
     "version": "1.0.1",
     "status": "Queued",

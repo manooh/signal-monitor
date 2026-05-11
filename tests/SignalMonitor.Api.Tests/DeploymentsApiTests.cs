@@ -6,10 +6,10 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Trackr.Api.Models;
-using Trackr.Api.Repositories;
+using SignalMonitor.Api.Models;
+using SignalMonitor.Api.Repositories;
 
-namespace Trackr.Api.Tests;
+namespace SignalMonitor.Api.Tests;
 
 public sealed class DeploymentsApiTests
 {

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Trackr.Api.Models;
+namespace SignalMonitor.Api.Models;
 
 /// <summary>
 /// Request body for creating a deployment record.

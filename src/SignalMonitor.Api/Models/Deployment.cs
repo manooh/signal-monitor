@@ -1,4 +1,4 @@
-namespace Trackr.Api.Models;
+namespace SignalMonitor.Api.Models;
 
 /// <summary>
 /// A deployment tracked by the API.

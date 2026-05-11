@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using System.Reflection;
-using Trackr.Api.Repositories;
+using SignalMonitor.Api.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +37,6 @@ app.MapHealthChecks("/health");
 app.Run();
 
 /// <summary>
-/// Entry point for the Trackr API application.
+/// Entry point for the SignalMonitor API application.
 /// </summary>
 public partial class Program;

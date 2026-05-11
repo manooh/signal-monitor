@@ -1,9 +1,9 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Trackr.Api.Models;
-using Trackr.Api.Repositories;
+using SignalMonitor.Api.Models;
+using SignalMonitor.Api.Repositories;
 
-namespace Trackr.Api.Tests;
+namespace SignalMonitor.Api.Tests;
 
 public sealed class InMemoryDeploymentRepositoryTests
 {
