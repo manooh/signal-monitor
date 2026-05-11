@@ -21,7 +21,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddHealthChecks();
 
-builder.Services.AddSingleton<IDeploymentRepository, InMemoryDeploymentRepository>();
+builder.Services.AddSingleton<IMonitoringRepository, InMemoryMonitoringRepository>();
 
 var app = builder.Build();
 
@@ -37,6 +37,6 @@ app.MapHealthChecks("/health");
 app.Run();
 
 /// <summary>
-/// Entry point for the SignalMonitor API application.
+/// Entry point for the Signal Monitor API application.
 /// </summary>
 public partial class Program;
