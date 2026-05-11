@@ -169,6 +169,7 @@ Production considerations to mention if asked:
 - DDoS protection is intentionally outside this demo. In production, use rate limiting and request size limits in the API, plus reverse proxy, API gateway, or cloud edge protection in front of it.
 - Authorization would be the first real security addition. Protect write operations, especially creating/deleting servers, ingesting signals, and resolving alarms.
 - Access control could be role-based: read-only viewer, signal writer, operator for alarm status changes, and admin for server management.
+- If the signal table grew to 100 million rows, avoid raw unbounded list endpoints. Use indexed persistent storage, mandatory date ranges, cursor pagination, retention/archive policies, and precomputed dashboard aggregates.
 - Parallelism is deliberately simple here. The in-memory repository uses a lock for consistent demo state; production would use database concurrency controls, async I/O, pagination, queues, and background workers for higher signal volume.
 
 Delete server:

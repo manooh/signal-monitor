@@ -162,6 +162,7 @@ Wichtig: Das ist bewusst noch keine vollständige Security-Lösung. Auth, Rate L
 
 - Datenhaltung: SQLite, Migrationen, Tests gegen echte Persistenz
 - API-Schnittstelle: Auth, Rollen/Rechte, Pagination, Versionierung, ProblemDetails
+- Große Datenmengen: Indexes, Cursor Pagination, Zeitfilter, Retention/Archivierung, Aggregates
 - Schutz vor Missbrauch: Rate Limiting, Request Size Limits, DDoS-Schutz über Proxy/Cloud Edge
 - Parallelität: echte Persistenz mit Concurrency Controls, async I/O, Background Processing
 - Betrieb: Logging, Metriken, Tracing, erweiterte Health Checks
@@ -172,9 +173,10 @@ Wichtig: Das ist bewusst noch keine vollständige Security-Lösung. Auth, Rate L
 Nicht alles wäre sofort nötig. Sinnvolle Reihenfolge:
 1. Datenhaltung: In-Memory durch SQLite ersetzen, Migrationen einführen und Tests ergänzen, die wirklich gegen Persistenz laufen.
 2. API-Schnittstelle: Auth schützt schreibende Endpunkte; Rollen/Rechte trennen Viewer, Signal Writer, Operator und Admin; Pagination verhindert riesige Antworten; Versionierung hält spätere Änderungen kompatibel; ProblemDetails macht Fehlerantworten konsistent.
-3. Schutz vor Missbrauch: Rate Limiting und Request Size Limits gehören in die App; DDoS-Schutz würde ich realistisch vor der App lösen, zum Beispiel über Reverse Proxy, API Gateway oder Cloud Edge.
-4. Parallelität: Der In-Memory-Prototyp nutzt einen Lock für konsistente Demo-Daten. Für Produktion würde ich Datenbank-Concurrency, async I/O, Queues oder Background Worker für hohe Signalrate einsetzen.
-5. Betrieb: Strukturierte Logs, Metriken und Tracing helfen bei Debugging und Monitoring; Health Checks sollten später auch Datenbank oder andere Dependencies prüfen.
-6. Alerting: Schwellwerte gehören später in Konfiguration oder Datenbank; gleiche Alarme sollten nicht endlos doppelt erzeugt werden; Benachrichtigungen wären ein eigener Adapter.
-7. Delivery: CI/CD baut, testet und veröffentlicht das Docker Image reproduzierbar; Security Scans prüfen Abhängigkeiten und Container-Basisimages.
+3. Große Datenmengen: Bei 100 Millionen Signal Samples würde ich nicht mehr "alles listen". Es braucht Indexes auf Server/Kind/Status/Zeit, verpflichtende Zeitfilter, Cursor Pagination, Retention/Archivierung und Aggregates für Dashboards statt Rohdatenabfragen.
+4. Schutz vor Missbrauch: Rate Limiting und Request Size Limits gehören in die App; DDoS-Schutz würde ich realistisch vor der App lösen, zum Beispiel über Reverse Proxy, API Gateway oder Cloud Edge.
+5. Parallelität: Der In-Memory-Prototyp nutzt einen Lock für konsistente Demo-Daten. Für Produktion würde ich Datenbank-Concurrency, async I/O, Queues oder Background Worker für hohe Signalrate einsetzen.
+6. Betrieb: Strukturierte Logs, Metriken und Tracing helfen bei Debugging und Monitoring; Health Checks sollten später auch Datenbank oder andere Dependencies prüfen.
+7. Alerting: Schwellwerte gehören später in Konfiguration oder Datenbank; gleiche Alarme sollten nicht endlos doppelt erzeugt werden; Benachrichtigungen wären ein eigener Adapter.
+8. Delivery: CI/CD baut, testet und veröffentlicht das Docker Image reproduzierbar; Security Scans prüfen Abhängigkeiten und Container-Basisimages.
 -->

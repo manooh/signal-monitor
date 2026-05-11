@@ -157,6 +157,7 @@ The demo intentionally keeps the runtime surface small, but the design leaves cl
 - DDoS and abuse protection: rate limiting, request size limits, reverse proxy or cloud edge protection, and alerting on unusual traffic patterns.
 - Authorization: authentication for callers and policies that protect write operations such as creating servers, ingesting signals, deleting servers, and resolving alarms.
 - Multiple access levels: read-only viewers, signal writers, operators who can acknowledge or resolve alarms, and admins who can manage servers.
+- Large data volume: for millions of signal samples, the API would need indexed persistent storage, cursor pagination, date-range filters, retention or archive policies, and precomputed aggregates for dashboards.
 - Parallelism: the in-memory repository uses a lock to keep demo data consistent; a production store would rely on database concurrency controls, async I/O, pagination, and background processing for heavier signal ingestion.
 
 ## Design Notes
