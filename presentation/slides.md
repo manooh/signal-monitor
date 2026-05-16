@@ -1,6 +1,6 @@
 ---
 theme: default
-title: Web-Service Task Example
+title: Server Signal Monitor (.NET 8 REST API)
 info: |
   Präsentation für das Interview-Projekt.
 layout: cover
@@ -12,14 +12,12 @@ transition: slide-left
 mdc: true
 ---
 
-# Web-Service Task Example
+# Server Signal Monitor
 
-Server Signal Monitor als kleine .NET 8 REST API
+.NET 8 REST API, containerisiert mit Docker
 
 Vorstellung, Architekturentscheidungen und Live-Demo
 
-<!--
--->
 
 ---
 
@@ -28,24 +26,20 @@ Vorstellung, Architekturentscheidungen und Live-Demo
 - Web-Service mit C# / .NET 8
 - Endpunkte zum Anzeigen, Anlegen und Löschen eines Eintrags
 - Einfache Datenhaltung (In-Memory oder SQLite)
-- Docker build- und startbar
-- Dokumentation und kurzes README
+- mit Docker build- und startbar
+- Dokumentation und README
 
-<!--
--->
 
 ---
 
 # Vorgehen
 
-- Erstes Grundgerüst mit Codex erstellt und analysiert
-- .NET-Projektstruktur, Syntax und Konventionen verstanden
-- Neues Projekt von Grund auf aufgebaut
-- Funktionalität schrittweise ergänzt
-- Tests, Docker, Swagger und README später bewusst nachgezogen
+| Iteration | Fokus | Ergebnis |
+| --- | --- | --- |
+| **1** | Prototyp | Minimalanforderungen, Codex-Build, erste API-Calls |
+| **2** | Deployment Tracker | Swagger/Doku, README, Tests, Feedback |
+| **3** | Server Signal Monitor | Domain Model, Validierung, Demo-API, nächste Schritte |
 
-<!--
--->
 
 ---
 
@@ -57,73 +51,34 @@ Ein Server Signal Monitor für einfache Betriebsdaten.
 - Heartbeat, CPU und Memory als Signals erfassen
 - Alarme bei einfachen Schwellwerten anzeigen
 
-<!--
--->
-
----
-
-# Architektur
-
 ```mermaid
-flowchart LR
-    Client[Client / Swagger / curl]
-    Controllers[ASP.NET Core Controllers]
-    Models[Request and Response Models]
-    RepoInterface[IMonitoringRepository]
-    Repo[InMemoryMonitoringRepository]
-    Seed[appsettings.json Seed Data]
-    Tests[xUnit Integration and Repository Tests]
+classDiagram
+    class Server {
+        +Guid Id
+        +string Name
+        +string Environment
+        +string Region
+        +ServerStatus Status
+    }
 
-    Client --> Controllers
-    Controllers --> Models
-    Controllers --> RepoInterface
-    RepoInterface --> Repo
-    Seed --> Repo
-    Tests --> Controllers
-    Tests --> Repo
+    class SignalSample {
+        +Guid Id
+        +Guid ServerId
+        +SignalKind Kind
+        +double Value
+        +string Unit
+    }
+
+    class Alarm {
+        +Guid Id
+        +Guid ServerId
+        +SignalKind SignalKind
+        +AlarmSeverity Severity
+        +AlarmStatus Status
+        +string Message
+    }
+
 ```
-
-- Controller für HTTP-Verhalten
-- Models für Request/Response-Strukturen
-- Repository-Interface als Speicherabstraktion
-- In-Memory Implementierung mit Seed-Daten
-- Integrationstests und Repository-Tests
-
-<!--
--->
-
----
-
-# Request Flow
-
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant API as Controller
-    participant V as Model Validation
-    participant R as Repository
-
-    C->>API: POST /api/servers/{id}/signals
-    API->>V: Bind and validate JSON
-    alt invalid input
-        V-->>C: 400 Bad Request
-    else valid input
-        API->>R: AddSignalAsync(...)
-        R-->>API: Signal + optional Alarm
-        API-->>C: 201 Created
-    end
-```
-
-- Validierung passiert vor der Business-Logik
-- Repository bleibt austauschbar
-- Tests prüfen den Flow über HTTP
-
-<!--
-Das ist bewusst keine große Enterprise-Architektur. Für den Demo-Scope war mir wichtig:
-1. Der HTTP-Rand ist testbar.
-2. Validierung schützt die einfache Business-Logik.
-3. Die Datenhaltung hängt hinter einem Interface und kann später ersetzt werden.
--->
 
 ---
 
@@ -148,42 +103,25 @@ Das ist bewusst keine große Enterprise-Architektur. Für den Demo-Scope war mir
 
 # Wichtige Entscheidungen
 
-- .NET 8, weil LTS und aktuell unterstützt
-- ASP.NET Core Web API als naheliegender REST-Stack
-- In-Memory für einfachen Start (über Interface `IMonitoringRepository` für spätere Austauschbarkeit)
-- Dokumentation über Swagger/OpenAPI, passend zur kleinen API
-- JSON Enums als Strings für lesbare Requests
-- Ungültige Eingaben werden mit Validierung abgefangen: `null`, fehlende Felder, falsche Typen und ungültige Enum-Werte liefern `400 Bad Request`
-- Tests fokussiert auf Verhalten statt auf jedes Implementierungsdetail
+- .NET 8: LTS
+- In-Memory über Interface
+- JSON Enums als Strings
+- Dokumentation über Swagger/OpenAPI
+- Validierung: z.B. über `400 Bad Request`
+- Tests: xUnit und API-Integrationstests
 
 <!--
+Interface: später austauschbar gegen SQLite/DB
+String-Enums: lesbarer in Swagger und Requests
+Validierung: null, fehlende Felder, falsche Typen, ungültige Enums
+Tests: Verhalten prüfen, nicht jedes Implementierungsdetail
 -->
 
 ---
 
-# Invalid Input Handling
+# Demo Time!
 
-Was passiert bei kaputten oder absichtlich falschen Requests?
-
-- Required Fields sind explizit validiert
-- Strings haben Mindest-/Maximallängen und dürfen nicht nur Whitespace sein
-- Enums müssen als gültige Strings kommen, Zahlen wie `1` werden abgelehnt
-- Signalwerte sind auf `0` bis `100` begrenzt
-- Integrationstests prüfen diese Fälle gegen die echte HTTP-Schicht
-
-<!--
-Beispiele:
-- POST /api/servers mit "name": 123 oder "name": "  " => 400
-- POST /api/servers/{id}/signals ohne "kind" oder mit "kind": 1 => 400
-- PUT /api/alarms/{id}/status mit "status": "NotARealStatus" => 400
-Wichtig: Das ist bewusst noch keine vollständige Security-Lösung. Auth, Rate Limiting, Request Size Limits, Security Headers und strukturierte ProblemDetails wären sinnvolle nächste Schritte.
--->
-
----
-
-# Demo-Time!
-
-1. API starten
+1. API mit Docker Compose starten
 2. Swagger öffnen
    - OpenAPI Definition
    - Dokumentation
@@ -193,32 +131,31 @@ Wichtig: Das ist bewusst noch keine vollständige Security-Lösung. Auth, Rate L
 4. CPU- oder Memory-Signal erfassen und Alarm zeigen
 5. Alarm auf `Resolved` setzen
 6. Einen kaputten Request zeigen: falscher Typ oder ungültiges Enum => `400`
-7. Tests ausführen
+7. Health Check und Tests ausführen
 
 <!--
+Zeigen: Swagger als Doku und Testoberfläche
+Kaputter Request: bewusstes Input Handling, keine Security-Komplettlösung
+Tests: Unit + echte HTTP-Schicht
 -->
 
 ---
 
 # Nächste Schritte
 
-- Datenhaltung: SQLite, Migrationen, Tests gegen echte Persistenz
-- API-Schnittstelle: Auth, Rollen/Rechte, Pagination, Versionierung, konsistente Fehler mit ProblemDetails
-- Große Datenmengen: Indexes, Cursor Pagination, Zeitfilter, Retention/Archivierung, Aggregates
-- Schutz vor Missbrauch: Rate Limiting, Request Size Limits, DDoS-Schutz über Proxy/Cloud Edge
-- Parallelität: echte Persistenz mit Concurrency Controls, async I/O, Background Processing
-- Betrieb: Logging, Metriken, Tracing, erweiterte Health Checks
-- Alerting: konfigurierbare Schwellwerte, Deduplizierung, Benachrichtigungen
-- Delivery: CI/CD, Docker Image Build, Security Scans
+- Persistenz: SQLite, Migrationen, Concurrency
+- API-Reife: Auth, Rollen, Pagination, ProblemDetails
+- Skalierung & Schutz: Indexes, Rate Limits, Request Limits
+- Betrieb: Logging, Metriken, Tracing, CI/CD
+- Alerting: konfigurierbare Schwellwerte und Benachrichtigungen
 
 <!--
-Nicht alles wäre sofort nötig. Sinnvolle Reihenfolge:
-1. Datenhaltung: In-Memory durch SQLite ersetzen, Migrationen einführen und Tests ergänzen, die wirklich gegen Persistenz laufen.
-2. API-Schnittstelle: Auth schützt schreibende Endpunkte; Rollen/Rechte trennen Viewer, Signal Writer, Operator und Admin; Pagination verhindert riesige Antworten; Versionierung hält spätere Änderungen kompatibel; ProblemDetails macht Fehlerantworten konsistent.
-3. Große Datenmengen: Bei 100 Millionen Signal Samples würde ich nicht mehr "alles listen". Es braucht Indexes auf Server/Kind/Status/Zeit, verpflichtende Zeitfilter, Cursor Pagination, Retention/Archivierung und Aggregates für Dashboards statt Rohdatenabfragen.
-4. Schutz vor Missbrauch: Rate Limiting und Request Size Limits gehören in die App; DDoS-Schutz würde ich realistisch vor der App lösen, zum Beispiel über Reverse Proxy, API Gateway oder Cloud Edge.
-5. Parallelität: Der In-Memory-Prototyp nutzt einen Lock für konsistente Demo-Daten. Für Produktion würde ich Datenbank-Concurrency, async I/O, Queues oder Background Worker für hohe Signalrate einsetzen.
-6. Betrieb: Strukturierte Logs, Metriken und Tracing helfen bei Debugging und Monitoring; Health Checks sollten später auch Datenbank oder andere Dependencies prüfen.
-7. Alerting: Schwellwerte gehören später in Konfiguration oder Datenbank; gleiche Alarme sollten nicht endlos doppelt erzeugt werden; Benachrichtigungen wären ein eigener Adapter.
-8. Delivery: CI/CD baut, testet und veröffentlicht das Docker Image reproduzierbar; Security Scans prüfen Abhängigkeiten und Container-Basisimages.
+Migrationen: versionierte Änderungen am Datenbankschema
+Concurrency: Handling von gleichzeitigen Datenbank-Änderungen
+Indexes: Inhaltsverzeichnis für Datenbanken
+Rate Limits: Request-Begrenzung
+Request Limits: Request-Größen-Begrenzung
+Metriken: Antwortzeiten, Fehlerraten, Anzahl Requests, CPU-Auslastung
+Tracing: Request durch mehrere Schritte/Services verfolgen
+CI/CD: Continuous Delivery (make deployable) / Continuous Deployment (deploy automatically)
 -->
