@@ -7,8 +7,16 @@ URL:
 http://localhost:3030
 ```
 
+Local:
 ```bash
-# start with Docker
+cd presentation
+npm install
+npm run dev
+```
+
+Docker:
+```bash
+# start
 docker compose -f presentation/docker-compose.yml up
 # stop
 docker compose -f presentation/docker-compose.yml down
