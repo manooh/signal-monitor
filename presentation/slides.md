@@ -1,5 +1,6 @@
 ---
 theme: default
+colorSchema: light
 title: Server Signal Monitor (.NET 8 REST API)
 info: |
   Präsentation für das Interview-Projekt.
