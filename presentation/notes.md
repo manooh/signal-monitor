@@ -1,5 +1,134 @@
 # Presentation Notes
 
+## Demo Flow
+
+1. Slides
+2. Start the API with Docker Compose.
+3. Use the API with Swagger.
+   - Open Swagger UI.
+   - List all servers.
+   - Register a server.
+   - Open the created server by ID.
+   - Record a CPU or memory signal that raises an alarm.
+   - List active alarms.
+   - Set the alarm to `Resolved`.
+   - Show one invalid request returning `400 Bad Request`.
+   - Optional: delete the demo server.
+4. Show the health check: `/health`.
+5. Code walkthrough in VS Code.
+6. Run the tests.
+
+## Swagger Demo Entries
+
+Create server: `POST /api/servers`
+
+```json
+{
+  "name": "api-prod-02",
+  "environment": "production",
+  "region": "eu-central"
+}
+```
+
+Get created server: `GET /api/servers/{id}`
+
+```text
+id = SERVER-ID-FROM-CREATE-RESPONSE
+```
+
+Record heartbeat, no alarm: `POST /api/servers/{id}/signals`
+
+```json
+{
+  "kind": "Heartbeat",
+  "value": 1,
+  "unit": "ok"
+}
+```
+
+Record CPU signal, no alarm: `POST /api/servers/{id}/signals`
+
+```json
+{
+  "kind": "Cpu",
+  "value": 42,
+  "unit": "percent"
+}
+```
+
+Record memory signal, no alarm: `POST /api/servers/{id}/signals`
+
+```json
+{
+  "kind": "Memory",
+  "value": 67,
+  "unit": "percent"
+}
+```
+
+Record CPU signal, warning alarm: `POST /api/servers/{id}/signals`
+
+```json
+{
+  "kind": "Cpu",
+  "value": 84,
+  "unit": "percent"
+}
+```
+
+Record memory signal, critical alarm: `POST /api/servers/{id}/signals`
+
+```json
+{
+  "kind": "Memory",
+  "value": 93,
+  "unit": "percent"
+}
+```
+
+Record failed heartbeat, critical alarm: `POST /api/servers/{id}/signals`
+
+```json
+{
+  "kind": "Heartbeat",
+  "value": 0,
+  "unit": "ok"
+}
+```
+
+List active alarms: `GET /api/alarms`
+
+```text
+status = Active
+```
+
+Resolve alarm: `PUT /api/alarms/{id}/status`
+
+```json
+{
+  "status": "Resolved"
+}
+```
+
+Invalid server request: `POST /api/servers`
+
+```json
+{
+  "name": 123,
+  "environment": "production",
+  "region": "eu-central"
+}
+```
+
+Invalid signal request: `POST /api/servers/{id}/signals`
+
+```json
+{
+  "kind": 1,
+  "value": 93
+}
+```
+
 ## Slides
 
 URL:
@@ -23,21 +152,6 @@ docker compose -f presentation/docker-compose.yml down
 # stop and reset
 docker compose -f presentation/docker-compose.yml down -v
 ```
-
-## Demo Flow
-
-1. Slides
-2. Run the tests.
-3. Start the API with Docker Compose.
-4. Open Swagger UI.
-5. Register a server.
-6. List/filter servers.
-7. Record a CPU or memory signal that raises an alarm.
-8. Resolve the alarm.
-9. Show one invalid input example returning `400 Bad Request`.
-10. Delete the server.
-11. Show `/health`.
-12. Briefly show the code structure in VS Code.
 
 ## .NET Commands
 

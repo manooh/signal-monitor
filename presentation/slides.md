@@ -122,23 +122,10 @@ Tests: Verhalten prüfen, nicht jedes Implementierungsdetail
 
 # Demo Time!
 
-1. API mit Docker Compose starten
-2. Swagger öffnen
-   - OpenAPI Definition
-   - Dokumentation
-   - API nutzen: `GET`, `POST`, `PUT`, `DELETE`
-
-3. Server registrieren
-4. CPU- oder Memory-Signal erfassen und Alarm zeigen
-5. Alarm auf `Resolved` setzen
-6. Einen kaputten Request zeigen: falscher Typ oder ungültiges Enum => `400`
-7. Health Check und Tests ausführen
-
-<!--
-Zeigen: Swagger als Doku und Testoberfläche
-Kaputter Request: bewusstes Input Handling, keine Security-Komplettlösung
-Tests: Unit + echte HTTP-Schicht
--->
+- API (Swagger)
+- Health Check
+- Code-Walkthrough
+- Tests
 
 ---
 
