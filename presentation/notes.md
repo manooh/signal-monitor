@@ -61,10 +61,10 @@ dotnet run --project src/SignalMonitor.Api/SignalMonitor.Api.csproj
 dotnet watch run --launch-profile https --project src/SignalMonitor.Api/SignalMonitor.Api.csproj
 
 # Check Swagger and health in the browser:
-# http://localhost:5000/swagger
-# https://localhost:5001/swagger
-# http://localhost:5000/health
-# https://localhost:5001/health
+# http://localhost:5050/swagger
+# https://localhost:5051/swagger
+# http://localhost:5050/health
+# https://localhost:5051/health
 ```
 
 ## Docker Commands
@@ -86,8 +86,8 @@ docker compose logs -f signal-monitor-api
 docker compose down
 
 # Check Swagger and health in the browser:
-# http://localhost:5000/swagger
-# http://localhost:5000/health
+# http://localhost:5050/swagger
+# http://localhost:5050/health
 ```
 
 ## API Commands
@@ -95,20 +95,20 @@ docker compose down
 List servers:
 
 ```bash
-curl http://localhost:5000/api/servers | jq
+curl http://localhost:5050/api/servers | jq
 ```
 
 Filter servers:
 
 ```bash
-curl "http://localhost:5000/api/servers?environment=production" | jq
-curl "http://localhost:5000/api/servers?status=Warning" | jq
+curl "http://localhost:5050/api/servers?environment=production" | jq
+curl "http://localhost:5050/api/servers?status=Warning" | jq
 ```
 
 Create server:
 
 ```bash
-curl -i -X POST http://localhost:5000/api/servers \
+curl -i -X POST http://localhost:5050/api/servers \
   -H "Content-Type: application/json" \
   -d '{
     "name": "api-prod-02",
@@ -120,7 +120,7 @@ curl -i -X POST http://localhost:5000/api/servers \
 Record high CPU:
 
 ```bash
-curl -i -X POST http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE/signals \
+curl -i -X POST http://localhost:5050/api/servers/YOUR-SERVER-ID-HERE/signals \
   -H "Content-Type: application/json" \
   -d '{
     "kind": "Cpu",
@@ -131,13 +131,13 @@ curl -i -X POST http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE/signals \
 List active alarms:
 
 ```bash
-curl "http://localhost:5000/api/alarms?status=Active" | jq
+curl "http://localhost:5050/api/alarms?status=Active" | jq
 ```
 
 Resolve alarm:
 
 ```bash
-curl -i -X PUT http://localhost:5000/api/alarms/YOUR-ALARM-ID-HERE/status \
+curl -i -X PUT http://localhost:5050/api/alarms/YOUR-ALARM-ID-HERE/status \
   -H "Content-Type: application/json" \
   -d '{
     "status": "Resolved"
@@ -148,7 +148,7 @@ Invalid input examples:
 
 ```bash
 # Wrong JSON type: name should be a non-empty string
-curl -i -X POST http://localhost:5000/api/servers \
+curl -i -X POST http://localhost:5050/api/servers \
   -H "Content-Type: application/json" \
   -d '{
     "name": 123,
@@ -157,14 +157,14 @@ curl -i -X POST http://localhost:5000/api/servers \
   }'
 
 # Missing required signal kind
-curl -i -X POST http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE/signals \
+curl -i -X POST http://localhost:5050/api/servers/YOUR-SERVER-ID-HERE/signals \
   -H "Content-Type: application/json" \
   -d '{
     "value": 93
   }'
 
 # Numeric enum values are rejected; use "Cpu", "Memory", or "Heartbeat"
-curl -i -X POST http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE/signals \
+curl -i -X POST http://localhost:5050/api/servers/YOUR-SERVER-ID-HERE/signals \
   -H "Content-Type: application/json" \
   -d '{
     "kind": 1,
@@ -183,7 +183,7 @@ Production considerations to mention if asked:
 Delete server:
 
 ```bash
-curl -i -X DELETE http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE
+curl -i -X DELETE http://localhost:5050/api/servers/YOUR-SERVER-ID-HERE
 ```
 
 ## Quick Recovery
@@ -202,15 +202,15 @@ docker compose logs -f signal-monitor-api
 docker compose down
 
 # Check what uses the API ports
-lsof -i :5000
-lsof -i :5001
+lsof -i :5050
+lsof -i :5051
 
 # Kill a stuck local process after copying the PID from lsof
 kill <PID>
 
 # Check whether the API responds
-curl -i http://localhost:5000/health
-curl -k -i https://localhost:5001/health
+curl -i http://localhost:5050/health
+curl -k -i https://localhost:5051/health
 
 # Check .NET environment and installed SDKs
 dotnet --info

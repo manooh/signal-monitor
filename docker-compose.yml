@@ -8,4 +8,4 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
     ports:
-      - "5000:8080"
+      - "5050:8080"

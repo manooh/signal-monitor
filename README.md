@@ -32,7 +32,7 @@ docker compose down
 
 # Manual image build/run, if needed
 docker build -t signal-monitor-api .
-docker run --rm -p 5000:8080 \
+docker run --rm -p 5050:8080 \
   -e ASPNETCORE_ENVIRONMENT=Development \
   --name signal-monitor-api \
   signal-monitor-api
@@ -40,9 +40,9 @@ docker run --rm -p 5000:8080 \
 
 ## Default URLs
 
-- `http://localhost:5000`
-- `https://localhost:5001` when using the HTTPS launch profile
-- Swagger: `http://localhost:5000/swagger`
+- `http://localhost:5050`
+- `https://localhost:5051` when using the HTTPS launch profile
+- Swagger: `http://localhost:5050/swagger`
 
 ## Build and Test
 
@@ -70,13 +70,13 @@ dotnet test signal-monitor.sln
 List servers:
 
 ```bash
-curl http://localhost:5000/api/servers
+curl http://localhost:5050/api/servers
 ```
 
 Register a server:
 
 ```bash
-curl -i -X POST http://localhost:5000/api/servers \
+curl -i -X POST http://localhost:5050/api/servers \
   -H "Content-Type: application/json" \
   -d '{
     "name": "api-prod-02",
@@ -88,7 +88,7 @@ curl -i -X POST http://localhost:5000/api/servers \
 Record a CPU signal:
 
 ```bash
-curl -i -X POST http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE/signals \
+curl -i -X POST http://localhost:5050/api/servers/YOUR-SERVER-ID-HERE/signals \
   -H "Content-Type: application/json" \
   -d '{
     "kind": "Cpu",
@@ -99,7 +99,7 @@ curl -i -X POST http://localhost:5000/api/servers/YOUR-SERVER-ID-HERE/signals \
 Resolve an alarm:
 
 ```bash
-curl -i -X PUT http://localhost:5000/api/alarms/YOUR-ALARM-ID-HERE/status \
+curl -i -X PUT http://localhost:5050/api/alarms/YOUR-ALARM-ID-HERE/status \
   -H "Content-Type: application/json" \
   -d '{
     "status": "Resolved"
