@@ -8,7 +8,7 @@
    docker compose up --build
    ```
 3. Use the API with Swagger.
-   - Open Swagger UI: `http://localhost:5050/swagger`
+   - Open Swagger UI: [http://localhost:5050/swagger](http://localhost:5050/swagger)
    - List all servers: `GET /api/servers`
    - Register a server: `POST /api/servers`
    - Open the created server by ID: `GET /api/servers/{id}`
@@ -19,7 +19,7 @@
    - Set the alarm to `Resolved`: `PUT /api/alarms/{id}/status`
    - Show one invalid request returning `400 Bad Request`: `POST /api/servers`
    - Optional: delete the demo server: `DELETE /api/servers/{id}`
-4. Show the health check: `http://localhost:5050/health`.
+4. Show the health check: [http://localhost:5050/health](http://localhost:5050/health).
 5. Code walkthrough in VS Code.
 6. Run or mention the checks:
    - `dotnet build signal-monitor.sln --no-restore -warnaserror`
@@ -152,9 +152,7 @@ Invalid signal request: `POST /api/servers/{id}/signals`
 ## Slides
 
 URL:
-```text
-http://localhost:3030
-```
+[http://localhost:3030](http://localhost:3030)
 
 Local:
 ```bash
@@ -175,6 +173,13 @@ docker compose -f presentation/docker-compose.yml down -v
 
 ## .NET Commands
 
+Browser links:
+
+- [http://localhost:5050/swagger](http://localhost:5050/swagger)
+- [https://localhost:5051/swagger](https://localhost:5051/swagger)
+- [http://localhost:5050/health](http://localhost:5050/health)
+- [https://localhost:5051/health](https://localhost:5051/health)
+
 ```bash
 # Trust the local HTTPS development certificate, if needed
 dotnet dev-certs https --trust
@@ -194,14 +199,15 @@ dotnet run --project src/SignalMonitor.Api/SignalMonitor.Api.csproj
 # Start the API with the HTTPS launch profile and file watching
 dotnet watch run --launch-profile https --project src/SignalMonitor.Api/SignalMonitor.Api.csproj
 
-# Check Swagger and health in the browser:
-# http://localhost:5050/swagger
-# https://localhost:5051/swagger
-# http://localhost:5050/health
-# https://localhost:5051/health
+# Check Swagger and health with the browser links above.
 ```
 
 ## Docker Commands
+
+Browser links:
+
+- [http://localhost:5050/swagger](http://localhost:5050/swagger)
+- [http://localhost:5050/health](http://localhost:5050/health)
 
 ```bash
 # Build and start the API with Docker Compose
@@ -219,9 +225,7 @@ docker compose logs -f signal-monitor-api
 # Stop the API
 docker compose down
 
-# Check Swagger and health in the browser:
-# http://localhost:5050/swagger
-# http://localhost:5050/health
+# Check Swagger and health with the browser links above.
 ```
 
 ## API Commands
