@@ -36,7 +36,7 @@ public sealed class InMemoryMonitoringRepositoryTests
         var alpha = Server(name: "api-alpha", environment: "PRODUCTION", status: ServerStatus.Healthy);
         var warning = Server(name: "api-warning", environment: "production", status: ServerStatus.Warning);
 
-        var repository = CreateRepository([beta, alpha, warning]);
+        var repository = CreateRepository([beta, alpha, warning], [], [Alarm(warning, AlarmSeverity.Warning)]);
 
         var servers = await repository.GetServersAsync("PrOdUcTiOn", ServerStatus.Healthy);
 
@@ -44,6 +44,21 @@ public sealed class InMemoryMonitoringRepositoryTests
             .Should()
             .ContainInOrder(alpha.Id, beta.Id);
         servers.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task Constructor_DerivesSeededServerStatusesFromActiveAlarms()
+    {
+        var criticalServer = Server(status: ServerStatus.Healthy);
+        var staleWarningServer = Server(name: "api-prod-02", status: ServerStatus.Warning);
+        var alarm = Alarm(criticalServer, AlarmSeverity.Critical);
+        var repository = CreateRepository([criticalServer, staleWarningServer], [], [alarm]);
+
+        var critical = await repository.GetServerAsync(criticalServer.Id);
+        var healthy = await repository.GetServerAsync(staleWarningServer.Id);
+
+        critical!.Status.Should().Be(ServerStatus.Critical);
+        healthy!.Status.Should().Be(ServerStatus.Healthy);
     }
 
     [Fact]

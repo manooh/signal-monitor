@@ -26,6 +26,8 @@ public sealed class InMemoryMonitoringRepository : IMonitoringRepository
         _alarms = configuration
             .GetSection("SeedAlarms")
             .Get<List<Alarm>>() ?? [];
+
+        RefreshAllServerStatuses();
     }
 
     /// <inheritdoc />
@@ -280,6 +282,14 @@ public sealed class InMemoryMonitoringRepository : IMonitoringRepository
             : activeAlarms.Any()
                 ? ServerStatus.Warning
                 : ServerStatus.Healthy;
+    }
+
+    private void RefreshAllServerStatuses()
+    {
+        foreach (var server in _servers)
+        {
+            RefreshServerStatus(server.Id);
+        }
     }
 
     private static string NormalizeUnit(IngestSignalRequest request)
