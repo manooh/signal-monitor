@@ -24,6 +24,7 @@
 6. Run or mention the checks:
    - `dotnet build signal-monitor.sln --no-restore -warnaserror`
    - `dotnet test signal-monitor.sln --no-build`
+   - `docker compose run --rm tests`
    - `dotnet list signal-monitor.sln package --vulnerable --include-transitive`
 7. Stop the API.
    ```bash
@@ -192,6 +193,9 @@ dotnet build signal-monitor.sln
 
 # Run all tests
 dotnet test signal-monitor.sln
+
+# Run all tests through Docker
+docker compose run --rm tests
 
 # Start the API directly with .NET
 dotnet run --project src/SignalMonitor.Api/SignalMonitor.Api.csproj

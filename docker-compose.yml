@@ -9,3 +9,11 @@ services:
       ASPNETCORE_URLS: http://+:8080
     ports:
       - "5050:8080"
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    profiles:
+      - test

@@ -51,6 +51,12 @@ dotnet build signal-monitor.sln
 dotnet test signal-monitor.sln
 ```
 
+Run the tests through Docker:
+
+```bash
+docker compose run --rm tests
+```
+
 ## API
 
 | Method | Path | Purpose |
