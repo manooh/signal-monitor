@@ -183,6 +183,7 @@ public sealed class MonitoringApiTests
     [InlineData("""{"kind":"Cpu","value":"ninety-three"}""")]
     [InlineData("""{"kind":"Cpu","value":101}""")]
     [InlineData("""{"kind":"Cpu","value":93,"unit":"  "}""")]
+    [InlineData("""{"kind":"Heartbeat","value":2}""")]
     public async Task IngestSignal_WithMalformedBody_ReturnsBadRequest(string json)
     {
         using var factory = CreateFactory();
