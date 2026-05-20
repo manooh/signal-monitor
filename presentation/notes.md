@@ -4,19 +4,31 @@
 
 1. Slides
 2. Start the API with Docker Compose.
+   ```bash
+   docker compose up --build
+   ```
 3. Use the API with Swagger.
-   - Open Swagger UI.
-   - List all servers.
-   - Register a server.
-   - Open the created server by ID.
-   - Record a CPU or memory signal that raises an alarm.
-   - List active alarms.
-   - Set the alarm to `Resolved`.
-   - Show one invalid request returning `400 Bad Request`.
-   - Optional: delete the demo server.
-4. Show the health check: `/health`.
+   - Open Swagger UI: `http://localhost:5050/swagger`
+   - List all servers: `GET /api/servers`
+   - Register a server: `POST /api/servers`
+   - Open the created server by ID: `GET /api/servers/{id}`
+   - Record a CPU or memory signal that raises an alarm: `POST /api/servers/{id}/signals`
+   - Point out the `201 Created` response and copy the `Location` header.
+   - Open the created signal with `GET /api/signals/{id}`.
+   - List active alarms: `GET /api/alarms?status=Active`
+   - Set the alarm to `Resolved`: `PUT /api/alarms/{id}/status`
+   - Show one invalid request returning `400 Bad Request`: `POST /api/servers`
+   - Optional: delete the demo server: `DELETE /api/servers/{id}`
+4. Show the health check: `http://localhost:5050/health`.
 5. Code walkthrough in VS Code.
-6. Run the tests.
+6. Run or mention the checks:
+   - `dotnet build signal-monitor.sln --no-restore -warnaserror`
+   - `dotnet test signal-monitor.sln --no-build`
+   - `dotnet list signal-monitor.sln package --vulnerable --include-transitive`
+7. Stop the API.
+   ```bash
+   docker compose down
+   ```
 
 ## Swagger Demo Entries
 
@@ -74,6 +86,14 @@ Record CPU signal, warning alarm: `POST /api/servers/{id}/signals`
   "value": 84,
   "unit": "percent"
 }
+```
+
+After recording a signal, copy the `Location` response header.
+
+Get created signal: `GET /api/signals/{id}`
+
+```text
+id = SIGNAL-ID-FROM-LOCATION-HEADER
 ```
 
 Record memory signal, critical alarm: `POST /api/servers/{id}/signals`

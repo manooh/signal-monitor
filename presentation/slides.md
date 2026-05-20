@@ -82,6 +82,8 @@ classDiagram
 ```
 
 ---
+class: text-xs
+---
 
 # API
 
@@ -92,6 +94,7 @@ classDiagram
 | `POST` | `/api/servers` | Server registrieren |
 | `POST` | `/api/servers/{id}/signals` | Signal erfassen |
 | `GET` | `/api/signals` | Signals anzeigen |
+| `GET` | `/api/signals/{id}` | Einzelnes Signal anzeigen |
 | `GET` | `/api/alarms` | Alarme anzeigen |
 | `PUT` | `/api/alarms/{id}/status` | Alarmstatus aktualisieren |
 | `DELETE` | `/api/servers/{id}` | Server löschen |
@@ -109,30 +112,49 @@ classDiagram
 - JSON Enums als Strings
 - Dokumentation über Swagger/OpenAPI
 - Validierung: z.B. über `400 Bad Request`
+- `201 Created` mit `Location` Header
 - Tests: xUnit und API-Integrationstests
 
 <!--
 Interface: später austauschbar gegen SQLite/DB
 String-Enums: lesbarer in Swagger und Requests
 Validierung: null, fehlende Felder, falsche Typen, ungültige Enums
+Location Header: erzeugtes Signal kann direkt über /api/signals/{id} gelesen werden
 Tests: Verhalten prüfen, nicht jedes Implementierungsdetail
+-->
+
+---
+
+# Qualität & Scope
+
+- 30 Tests: Repository-Logik und API-Integration
+- Build läuft mit Warnings-as-Errors
+- Keine vulnerablen NuGet Packages gemeldet
+- Bewusst kleiner Scope: Verhalten und Trade-offs bleiben prüfbar
+- Nicht production-ready: kein Auth, keine Persistenz, keine Telemetrie
+
+<!--
+Das Projekt ist absichtlich klein gehalten.
+Dadurch kann man im Interview jeden Teil erklären: API-Verhalten, Validierung, Tests, Docker und Grenzen.
 -->
 
 ---
 
 # Demo Time!
 
-- API (Swagger)
-- Health Check
-- Code-Walkthrough
-- Tests
+- Swagger öffnen und Server anlegen
+- Signal erfassen: `201 Created` + `Location`
+- Signal über `/api/signals/{id}` lesen
+- Alarm anzeigen und auf `Resolved` setzen
+- Ungültigen Request mit `400 Bad Request` zeigen
+- Health Check, Code-Walkthrough, Tests
 
 ---
 
 # Nächste Schritte
 
 - Persistenz: SQLite, Migrationen, Concurrency
-- API-Reife: Auth, Rollen, Pagination, ProblemDetails
+- API-Reife: Auth, Rollen, Pagination, klare Fehlerantworten
 - Skalierung & Schutz: Indexes, Rate Limits, Request Limits
 - Betrieb: Logging, Metriken, Tracing, CI/CD
 - Alerting: konfigurierbare Schwellwerte und Benachrichtigungen
@@ -143,6 +165,7 @@ Concurrency: Handling von gleichzeitigen Datenbank-Änderungen
 Indexes: Inhaltsverzeichnis für Datenbanken
 Rate Limits: Request-Begrenzung
 Request Limits: Request-Größen-Begrenzung
+Klare Fehlerantworten: z.B. ProblemDetails als standardisiertes Fehlerformat
 Metriken: Antwortzeiten, Fehlerraten, Anzahl Requests, CPU-Auslastung
 Tracing: Request durch mehrere Schritte/Services verfolgen
 CI/CD: Continuous Delivery (make deployable) / Continuous Deployment (deploy automatically)
