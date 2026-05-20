@@ -106,6 +106,8 @@ public sealed class MonitoringApiTests
             value = 93
         });
         var signal = await signalResponse.Content.ReadFromJsonAsync<SignalSample>(JsonOptions);
+        var getSignalResponse = await client.GetAsync(signalResponse.Headers.Location);
+        var fetchedSignal = await getSignalResponse.Content.ReadFromJsonAsync<SignalSample>(JsonOptions);
 
         var alarmsResponse = await client.GetAsync($"/api/alarms?serverId={created.Id}&status=Active");
         var alarms = await alarmsResponse.Content.ReadFromJsonAsync<Alarm[]>(JsonOptions);
@@ -117,8 +119,11 @@ public sealed class MonitoringApiTests
         var getAfterDeleteResponse = await client.GetAsync($"/api/servers/{created.Id}");
 
         signalResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        signalResponse.Headers.Location.Should().NotBeNull();
         signal!.Kind.Should().Be(SignalKind.Cpu);
         signal.Unit.Should().Be("percent");
+        getSignalResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        fetchedSignal!.Id.Should().Be(signal.Id);
         alarmsResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         alarms.Should().ContainSingle();
         alarms![0].Severity.Should().Be(AlarmSeverity.Critical);
@@ -171,6 +176,17 @@ public sealed class MonitoringApiTests
             kind = "Heartbeat",
             value = 1
         });
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task GetSignal_ForMissingSignal_ReturnsNotFound()
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient();
+
+        var response = await client.GetAsync($"/api/signals/{Guid.NewGuid()}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

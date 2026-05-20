@@ -61,6 +61,7 @@ dotnet test signal-monitor.sln
 | `POST` | `/api/servers/{id}/signals` | Record a heartbeat, CPU, or memory signal |
 | `DELETE` | `/api/servers/{id}` | Delete a server and its related data |
 | `GET` | `/api/signals` | List signal samples, optionally filtered by `serverId` or `kind` |
+| `GET` | `/api/signals/{id}` | Get one signal sample |
 | `GET` | `/api/alarms` | List alarms, optionally filtered by `serverId` or `status` |
 | `PUT` | `/api/alarms/{id}/status` | Update an alarm status |
 | `GET` | `/health` | Health check |

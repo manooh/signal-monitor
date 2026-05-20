@@ -35,4 +35,21 @@ public sealed class SignalsController : ControllerBase
 
         return Ok(signals);
     }
+
+    /// <summary>
+    /// Gets a signal sample by its ID.
+    /// </summary>
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType<SignalSample>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SignalSample>> GetSignal(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var signal = await _repository.GetSignalAsync(id, cancellationToken);
+
+        return signal is null
+            ? NotFound()
+            : Ok(signal);
+    }
 }

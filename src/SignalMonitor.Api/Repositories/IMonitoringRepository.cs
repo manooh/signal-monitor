@@ -39,6 +39,11 @@ public interface IMonitoringRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Gets a signal sample by its ID.
+    /// </summary>
+    Task<SignalSample?> GetSignalAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Records a signal sample and raises an alarm when thresholds are crossed.
     /// </summary>
     Task<SignalSample?> AddSignalAsync(

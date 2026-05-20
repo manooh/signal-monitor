@@ -88,9 +88,9 @@ public sealed class ServersController : ControllerBase
         return signal is null
             ? NotFound()
             : CreatedAtAction(
-                nameof(SignalsController.GetSignals),
+                nameof(SignalsController.GetSignal),
                 "Signals",
-                new { serverId = signal.ServerId, kind = signal.Kind },
+                new { id = signal.Id },
                 signal);
     }
 

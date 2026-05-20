@@ -139,6 +139,16 @@ public sealed class InMemoryMonitoringRepository : IMonitoringRepository
     }
 
     /// <inheritdoc />
+    public Task<SignalSample?> GetSignalAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        lock (_lock)
+        {
+            var signal = _signals.FirstOrDefault(item => item.Id == id);
+            return Task.FromResult(signal is null ? null : Clone(signal));
+        }
+    }
+
+    /// <inheritdoc />
     public Task<SignalSample?> AddSignalAsync(
         Guid serverId,
         IngestSignalRequest request,
